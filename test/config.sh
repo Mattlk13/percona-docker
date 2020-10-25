@@ -35,6 +35,9 @@ testAlias+=(
 	[perconalab/percona-server-mongodb]='mongo'
 	[perconalab/percona-server-mongodb-operator]='mongo'
 
+	[percona/percona-distribution-postgresql]='postgres'
+	[perconalab/percona-distribution-postgresql]='postgres'
+
 	[hola-mundo]='hello-world'
 	[hello-seattle]='hello-world'
 )
@@ -91,9 +94,6 @@ imageTests+=(
 	[golang]='
 		golang-hello-world
 	'
-	[haproxy]='
-		haproxy-basics
-	'
 	[haskell]='
 		haskell-cabal
 		haskell-ghci
@@ -123,6 +123,8 @@ imageTests+=(
 	[mongo]='
 		mongo-basics
 		mongo-auth-basics
+		mongo-tls-basics
+		mongo-tls-auth
 	'
 	[mono]='
 	'

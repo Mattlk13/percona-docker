@@ -6,7 +6,7 @@ set -o xtrace
 function mysql_root_exec() {
   local server="$1"
   local query="$2"
-  MYSQL_PWD="${MYSQL_ROOT_PASSWORD:-password}" timeout 600 mysql -h "${server}" -uroot -s -NB -e "${query}"
+  MYSQL_PWD="${OPERATOR_PASSWORD:-operator}" timeout 600 mysql -h "${server}" -uoperator -s -NB -e "${query}"
 }
 
 function wait_for_mysql() {
@@ -43,6 +43,7 @@ function main() {
         echo "Could not find PEERS ..."
         exit
     fi
+    pod_zero=$(echo "$first_host" | cut -d . -f 1 | sed -r 's/-[0-9]+$/-0/')
     service=$(echo "$first_host" | cut -d . -f 2-)
 
     sleep 15s # wait for evs.inactive_timeout
@@ -53,6 +54,8 @@ function main() {
     if [ "$(proxysql_admin_exec "127.0.0.1" 'SELECT variable_value FROM global_variables WHERE variable_name="mysql-have_ssl"')" = "true" ]; then
         SSL_ARG="--use-ssl=yes"
     fi
+
+    sed "s/WRITE_NODE=.*/WRITE_NODE='$pod_zero.$service:3306'/g" /etc/proxysql-admin.cnf 1<> /etc/proxysql-admin.cnf
 
     proxysql-admin \
         --config-file=/etc/proxysql-admin.cnf \
